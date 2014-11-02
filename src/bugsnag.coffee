@@ -1,4 +1,3 @@
-domain = require "domain"
 path = require "path"
 
 Utils = require "./utils"
@@ -57,24 +56,6 @@ module.exports = class Bugsnag
     notification = new Notification(bugsnagErrors, options)
     notification.deliver cb
 
-  # The error handler express/connect middleware. Performs a notify
-  @errorHandler: (err, req, res, next) =>
-    Configuration.logger.info "Handling express error: #{err.stack || err}"
-    @notify err, {req: req, severity: "error"}, autoNotifyCallback(err)
-    next err
-
-  # The request middleware for express/connect. Ensures next(err) is called when there is an error, and
-  # tracks the request for manual notifies.
-  @requestHandler: (req, res, next) ->
-    dom = domain.create()
-    dom._bugsnagOptions =
-      req: req
-    dom.on 'error', next
-    dom.run next
-
-  @restifyHandler: (req, res, route, err) =>
-    @notify err, {req: req, severity: "error"}, autoNotifyCallback(err)
-
   # Intercepts the first argument from a callback and interprets it at as error.
   # if the error is not null it notifies bugsnag and doesn't call the callback
   @intercept: (cb) =>
@@ -95,6 +76,8 @@ module.exports = class Bugsnag
       cb = options
       options = {}
 
+    # only require domain if auto notify is used
+    domain = require "domain"
     dom = domain.create()
     dom._bugsnagOptions = options
     options["severity"] = "error"

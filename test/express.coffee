@@ -17,13 +17,20 @@ describe "express middleware", ->
 
     app = express()
 
-    app.use bugsnag.requestHandler
+    app.use (req, res, next) ->
+      dom = domain.create()
+      dom._bugsnagOptions =
+        req: req
+      dom.on 'error', next
+      dom.run next
 
     app.get "/ping", (req, res, next) ->
       throw new RangeError()
       res.sned("pong")
 
-    app.use bugsnag.errorHandler
+    app.use (err, req, res, next) ->
+      bugsnag.notify err, {req: req, severity: "error"}
+      next err
 
     port = app.listen().address().port
 
