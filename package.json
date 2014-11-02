@@ -17,7 +17,7 @@
         "grunt-contrib-coffee": "latest",
         "grunt-mocha-test": "latest",
         "grunt-bumpx": "latest",
-        "express": "~3.4.2"
+        "express": "~4.10.0"
     },
     "repository": {
         "type": "git",

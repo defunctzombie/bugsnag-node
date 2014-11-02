@@ -6,7 +6,7 @@ module.exports = requestInfo = (req) ->
 
   port = if (!portNumber || portNumber == 80 || portNumber == 443) then ''   else ':' + portNumber
 
-  full_url = req.protocol + "://" + req.host + port + req.url
+  full_url = req.protocol + "://" + req.hostname + port + req.url
 
   request = {
     url: full_url

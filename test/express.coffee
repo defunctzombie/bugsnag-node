@@ -16,14 +16,14 @@ describe "express middleware", ->
   it "should automatically collect request data", (next) ->
 
     app = express()
-    app.use app.router
 
     app.use bugsnag.requestHandler
-    app.use bugsnag.errorHandler
 
     app.get "/ping", (req, res, next) ->
       throw new RangeError()
       res.sned("pong")
+
+    app.use bugsnag.errorHandler
 
     port = app.listen().address().port
 
